@@ -26,6 +26,16 @@ public class MainPageTests {
         Assertions.assertEquals(Constants.ANSWER_QUESTION_ABOUT_MKAD, mainPage.getSecondAnswerText());
     }
 
+    @Test
+    @DisplayName("Проверяем работоспособность нжиней кнопки оформления на главной странице, путем открытия последующей и " +
+            "нахождения на ней существующего элемента")
+    public void checkBottomOrderButtonText() {
+        MainPage mainPage = new MainPage(driver);
+        mainPage.clickBottomOrderButton();
+        ForWhom forWhom = new ForWhom(driver);
+        forWhom.chooseStation(Constants.SOKOLNIKI);
+    }
+
     @AfterEach
     public void everyTestEnding() {
         driver.quit();
