@@ -1,29 +1,48 @@
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class MainPageTests {
-    private WebDriver driver;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-    @BeforeEach
-    public void setUp() {
+public class MainPageTests {
+    private static WebDriver driver;
+    private static MainPage mainPage;
+
+    @BeforeAll
+    public static void setUp() {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.get("https://qa-scooter.praktikum-services.ru/");
-        MainPage mainPage = new MainPage(driver);
+        mainPage = new MainPage(driver);
         mainPage.clickAcceptCookieButton();
     }
 
-    @Test
-    public void checkFirstQuestionsAnswer() {
-        MainPage mainPage = new MainPage(driver);
-        Assertions.assertEquals(Constants.ANSWER_QUESTION_ABOUT_MONEY, mainPage.getFirstAnswerText());
+    private static Stream<Arguments> provideTestData() {
+        return Stream.of(
+                Arguments.of((Supplier<String>) () -> mainPage.getMoneyAnswerText(), Constants.ANSWER_QUESTION_MONEY),
+                Arguments.of((Supplier<String>) () -> mainPage.getHowManyAnswerText(), Constants.ANSWER_QUESTION_HOW_MANY),
+                Arguments.of((Supplier<String>) () -> mainPage.getRentTime0Text(), Constants.ANSWER_QUESTION_RENT_TIME),
+                Arguments.of((Supplier<String>) () -> mainPage.getOrderRentTodayAnswerText(), Constants.ANSWER_QUESTION_ORDER_TODAY),
+                Arguments.of((Supplier<String>) () -> mainPage.getExtendAnswerText(), Constants.ANSWER_QUESTION_EXTEND),
+                Arguments.of((Supplier<String>) () -> mainPage.getChargingAnswerText(), Constants.ANSWER_QUESTION_CHARGING),
+                Arguments.of((Supplier<String>) () -> mainPage.getRentCanceledAnswerText(), Constants.ANSWER_QUESTION_RENT_CANCELED),
+                Arguments.of((Supplier<String>) () -> mainPage.getMKADAnswerText(), Constants.ANSWER_QUESTION_ABOUT_MKAD)
+        );
     }
 
-    @Test
-    public void checkSecondQuestionsAnswer() {
+    @ParameterizedTest
+    @MethodSource("provideTestData")
+    public void checkQuestions(Supplier<String> answerSupplier, String expectedResult) {
         MainPage mainPage = new MainPage(driver);
-        Assertions.assertEquals(Constants.ANSWER_QUESTION_ABOUT_MKAD, mainPage.getSecondAnswerText());
+
+
+        String answer = answerSupplier.get();
+
+        Assertions.assertEquals(expectedResult, answer,  "Ожидаемый текст ответа отличается от полученного");
     }
 
     @Test
@@ -36,8 +55,8 @@ public class MainPageTests {
         forWhom.chooseStation(Constants.SOKOLNIKI);
     }
 
-    @AfterEach
-    public void everyTestEnding() {
+    @AfterAll
+    public static void tearDown() {
         driver.quit();
     }
 }
