@@ -54,6 +54,7 @@ public class OrderCreateTests {
         aboutRent.chooseRentalPeriod();
         aboutRent.chooseColourCheckbox();
         aboutRent.addCommentary(comment);
+        aboutRent.checkCompletedOrder();
     }
     @AfterEach
     public void everyTestEnding() {

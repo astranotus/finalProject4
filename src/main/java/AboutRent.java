@@ -1,4 +1,4 @@
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -38,8 +38,7 @@ public class AboutRent {
         driver.findElement(acceptOrder).click();
     }
     public void checkCompletedOrder() {
-        ;
-        Assertions.assertTrue(driver.findElement(By.xpath(".//*[text()='Заказ оформлен']")).isDisplayed(),
-                "Оформления заказа не было завершено");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(6));
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath(".//*[text()='Заказ оформлен']"))));
     }
 }
